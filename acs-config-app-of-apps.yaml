@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: acs-config-manager
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: stackrox
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: argocd
+    repoURL: https://github.com/caseyrobb/acs-demo
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
