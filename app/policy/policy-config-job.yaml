@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: policy-config-proc
-          image: registry.access.redhat.com/ubi8/python-39
+          image: registry.redhat.io/ubi9/python-39
           command:
             - /bin/bash
             - '-c'
