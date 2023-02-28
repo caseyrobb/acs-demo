@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: acs-auth-roles
+  namespace: stackrox
+data:
+  authroles.yaml: |
+    ---
+    Admin:
+    - cluster-admins
+    Analysts:
+    - secops
+    Continuous Integration:
+    - devops
+    Vulnerability Report Creator:
+    - management

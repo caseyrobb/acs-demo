@@ -1,0 +1,7 @@
+piVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: acsadmins
+users:
+  - opentlc-mgr
+  - crobb

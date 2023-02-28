@@ -1,9 +1,2 @@
-acs-central-config-secret.yaml
-acs-config-manager-app.yaml
-acs-config-proj.yaml
-acsadmins-group.yaml
-*-payload.json
 extras
-token
 ansible
-*.py
