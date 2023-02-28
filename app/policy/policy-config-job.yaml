@@ -94,16 +94,6 @@ spec:
                 secretKeyRef:
                   name: central-htpasswd
                   key: password
-            #- name: ACS_TOKEN
-            #  valueFrom:
-            #    secretKeyRef:
-            #      name: acs-token
-            #      key: token
-            #- name: CENTRAL
-            #  valueFrom:
-            #    secretKeyRef:
-            #      name: acs-central-url
-            #      key: endpoint
             - name: CENTRAL
               valueFrom:
                 configMapKeyRef:
