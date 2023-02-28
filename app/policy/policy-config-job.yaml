@@ -26,7 +26,7 @@ spec:
               import json
               import os
               
-              CENTRAL = os.environ.get("CENTRAL")
+              CENTRAL = f"https://{os.environ.get('CENTRAL')}"
               ACS_ADMIN_PASSWORD = os.environ.get("ACS_ADMIN_PASSWORD")
 
               req = requests.get(
@@ -99,11 +99,16 @@ spec:
             #    secretKeyRef:
             #      name: acs-token
             #      key: token
+            #- name: CENTRAL
+            #  valueFrom:
+            #    secretKeyRef:
+            #      name: acs-central-url
+            #      key: endpoint
             - name: CENTRAL
               valueFrom:
-                secretKeyRef:
-                  name: acs-central-url
-                  key: endpoint
+                configMapKeyRef:
+                  name: admission-control
+                  key: central-endpoint
       volumes:
       - name: policies-payload
         configMap:
