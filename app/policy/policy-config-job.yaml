@@ -94,11 +94,11 @@ spec:
                 secretKeyRef:
                   name: central-htpasswd
                   key: password
-            - name: ACS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: acs-token
-                  key: token
+            #- name: ACS_TOKEN
+            #  valueFrom:
+            #    secretKeyRef:
+            #      name: acs-token
+            #      key: token
             - name: CENTRAL
               valueFrom:
                 secretKeyRef:
