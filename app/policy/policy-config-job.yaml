@@ -25,6 +25,7 @@ spec:
               import requests
               import json
               import os
+              import sys
               
               CENTRAL = f"https://{os.environ.get('CENTRAL')}"
               ACS_ADMIN_PASSWORD = os.environ.get("ACS_ADMIN_PASSWORD")
