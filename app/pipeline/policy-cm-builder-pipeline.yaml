@@ -1,0 +1,141 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: policy-cm-builder
+  namespace: stackrox
+spec:
+  tasks:
+  - name: git-clone-policies
+    params:
+    - name: url
+      value: https://github.com/caseyrobb/acs-policies
+    - name: submodules
+      value: "true"
+    - name: depth
+      value: "1"
+    - name: sslVerify
+      value: "true"
+    - name: deleteExisting
+      value: "true"
+    - name: verbose
+      value: "true"
+    - name: gitInitImage
+      value: registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:17866349209d9c91a44a0ceabaf1a01559839b2349f112a465aba532d1bf1efa
+    - name: userHome
+      value: /tekton/home
+    - name: subdirectory
+      value: acs-policies
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: policies
+    - name: ssh-directory
+      workspace: git-credentials
+  - name: merge-policies
+    params:
+    - name: SCRIPT
+      value: 'cd acs-policies; jq -c -s ''{ policies: map(.policies[0]) }'' *.json
+        > policies-payload.json'
+    - name: image
+      value: docker.io/stedolan/jq:latest
+    - name: files
+    runAfter:
+    - git-clone-policies
+    taskRef:
+      kind: Task
+      name: yq
+    workspaces:
+    - name: source
+      workspace: policies
+  - name: create-policy-configmap
+    params:
+    - name: SCRIPT
+      value: cd acs-policies; oc create configmap policies-payload -n stackrox --from-file=policies-payload.json
+        --dry-run=client -o yaml > policies-payload-cm.yaml; cat policies-payload-cm.yaml
+    - name: VERSION
+      value: latest
+    runAfter:
+    - merge-policies
+    taskRef:
+      kind: ClusterTask
+      name: openshift-client
+    workspaces:
+    - name: manifest-dir
+      workspace: policies
+  - name: json-lint
+    params:
+    - name: SCRIPT
+      value: cd acs-policies; jq . policies-payload.json
+    - name: image
+      value: docker.io/stedolan/jq:latest
+    - name: files
+    runAfter:
+    - create-policy-configmap
+    taskRef:
+      kind: Task
+      name: yq
+    workspaces:
+    - name: source
+      workspace: policies
+  - name: yaml-lint
+    params:
+    - name: SCRIPT
+      value: cd acs-policies; yq policies-payload-cm.yaml
+    - name: image
+      value: docker.io/mikefarah/yq:4.27.5@sha256:2be3626ed633fbe1fc33ee9343a1256a6be53334412b2251b9a859f8c145bb53
+    - name: files
+    runAfter:
+    - create-policy-configmap
+    taskRef:
+      kind: Task
+      name: yq
+    workspaces:
+    - name: source
+      workspace: policies
+  - name: git-clone-acs-gitops
+    params:
+    - name: submodules
+      value: "true"
+    - name: depth
+      value: "1"
+    - name: sslVerify
+      value: "true"
+    - name: deleteExisting
+      value: "true"
+    - name: verbose
+      value: "true"
+    - name: gitInitImage
+      value: registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:17866349209d9c91a44a0ceabaf1a01559839b2349f112a465aba532d1bf1efa
+    - name: userHome
+      value: /tekton/home
+    - name: url
+      value: git@github.com:caseyrobb/acs-demo.git
+    - name: subdirectory
+      value: acs-demo
+    runAfter:
+    - json-lint
+    - yaml-lint
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: policies
+    - name: ssh-directory
+      workspace: git-credentials
+  - name: copy-and-commit
+    runAfter:
+    - git-clone-acs-gitops
+    taskRef:
+      kind: Task
+      name: copy-and-commit
+    workspaces:
+    - name: output
+      workspace: policies
+    - name: ssh-directory
+      workspace: git-credentials
+  workspaces:
+  - name: policies
+  - name: git-credentials

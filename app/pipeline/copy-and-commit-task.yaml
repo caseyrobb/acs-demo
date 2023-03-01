@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: copy-and-commit
+  namespace: stackrox
+spec:
+  steps:
+  - env:
+    - name: WORKSPACE_SSH_DIRECTORY_BOUND
+      value: $(workspaces.ssh-directory.bound)
+    - name: WORKSPACE_SSH_DIRECTORY_PATH
+      value: $(workspaces.ssh-directory.path)
+    image: registry.redhat.io/ubi9/toolbox
+    name: ""
+    script: "#!/usr/bin/env bash\nset -eu\ncp -Rv \"${WORKSPACE_SSH_DIRECTORY_PATH}\"
+      ~/.ssh\nchmod 700 ~/.ssh\nchmod -R 400 ~/.ssh/*\nchmod 600 ~/.ssh/known_hosts
+      \   \nls -l ~/.ssh/*\neval \"$(ssh-agent -s)\"\nssh-add ~/.ssh/id_ed25519\ncp
+      -v ./acs-policies/policies-payload-cm.yaml ./acs-demo/app/policy/policies-payload-cm.yaml\ncd
+      ./acs-demo/app/policy/\ngit config --global user.email \"cdr@redhat.com\"\ngit
+      config --global user.name \"Casey Robb\"\ngit add policies-payload-cm.yaml\ngit
+      commit -m \"policies-pipeline $(date +%s)\"\ngit push origin HEAD:master\n"
+    workingDir: $(workspaces.output.path)
+  workspaces:
+  - description: Workspace onto which the file is written.
+    name: output
+    optional: true
+  - description: |
+      A .ssh directory with private key, known_hosts, config, etc. Copied to
+      the user's home before git commands are executed. Used to authenticate
+      with the git remote when performing the clone. Binding a Secret to this
+      Workspace is strongly recommended over other volume types.
+    name: ssh-directory
+    optional: true

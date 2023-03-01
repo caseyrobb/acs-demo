@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    openshift.io/installed-from: tektonhub
+    tekton.dev/categories: Developer Tools
+    tekton.dev/displayName: Write a file
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/platforms: linux/amd64,linux/s390x,linux/ppc64le
+    tekton.dev/tags: generic
+  labels:
+    app.kubernetes.io/version: "0.1"
+  name: write-file
+  namespace: stackrox
+spec:
+  description: |-
+    Write a file to a workspace
+    This task can be used to write a file onto the output workspace. Use parameter expansion to insert variable content into the written file. It can also set specific permissions on the file.
+  params:
+  - description: |
+      Relative path to create within the workspace. Directories will be created as necessary.
+    name: path
+    type: string
+  - description: |
+      Contents of the file to create.
+    name: contents
+    type: string
+  - default: "0755"
+    description: |
+      chmod-style permission string to apply to the file. Note that octal numbers need quoting in YAML. Mode will not be applied to created directories.
+    name: mode
+    type: string
+  steps:
+  - env:
+    - name: PARAM_PATH
+      value: $(params.path)
+    - name: PARAM_MODE
+      value: $(params.mode)
+    - name: PARAM_CONTENTS
+      value: $(params.contents)
+    image: docker.io/library/alpine:3.12@sha256:36553b10a4947067b9fbb7d532951066293a68eae893beba1d9235f7d11a20ad
+    name: write-file
+    script: |
+      #!/bin/sh
+      set -eu
+      DIRNAME=$(dirname "${PARAM_PATH}")
+      mkdir -p "$DIRNAME"
+      printf '%s' "${PARAM_CONTENTS}" > "./${PARAM_PATH}"
+      chmod "${PARAM_MODE}" "./${PARAM_PATH}"
+    workingDir: $(workspaces.output.path)
+  workspaces:
+  - description: Workspace onto which the file is written.
+    name: output

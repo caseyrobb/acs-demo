@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: acs-config-pipeline-app
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: stackrox
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: app/pipeline
+    repoURL: https://github.com/caseyrobb/acs-demo
+    targetRevision: master
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
