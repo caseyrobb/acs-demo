@@ -1,0 +1,90 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: authprovider-job
+  namespace: stackrox
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    metadata:
+      name: authprovider-job
+      namespace: acs
+    spec:
+      containers:
+        - name: authprovider-process
+          image: registry.redhat.io/ubi9/python-39
+          env:
+          - name: ACS_ADMIN_PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: central-htpasswd
+                key: password
+          - name: CENTRAL
+            valueFrom:
+              configMapKeyRef:
+                key: central-endpoint
+                name: admission-control
+          - name: AUTHPROVIDER
+            value: OpenShift
+          volumeMounts:
+          - name: acs-auth-roles
+            mountPath: /tmp
+          command:
+            - /bin/bash
+            - '-c'
+            - |
+              pip install -q -U requests pyyaml 2>/dev/null 1>&2
+              cat << EOF > authroles.py
+
+              import json
+              import requests
+              import yaml
+              import os
+              
+              CENTRAL = os.environ.get("CENTRAL")
+              AUTHPROVIDER = os.environ.get("AUTHPROVIDER")
+              ACS_ADMIN_PASSWORD = os.environ.get("ACS_ADMIN_PASSWORD")
+              
+              AUTHID = requests.get(
+                  f"https://{CENTRAL}/v1/authProviders?name={AUTHPROVIDER}",
+                  verify=False,
+                  auth=("admin", ACS_ADMIN_PASSWORD),
+              ).json()["authProviders"][0]["id"]
+              
+              PREVGROUPS = json.loads(
+                  requests.get(f"https://{CENTRAL}/v1/groups", verify=False, auth=("admin", ACS_ADMIN_PASSWORD)).text
+              )["groups"]
+              
+              REQGROUPS = []
+              REQGROUPS.append(PREVGROUPS[0])
+              with open("/tmp/authroles.yaml", "r") as f:
+                  data = yaml.safe_load(f)
+                  for role, groups in data.items():
+                      for group in groups:
+                          g = {
+                              "props": {"authProviderId": AUTHID, "key": "groups", "value": group},
+                              "roleName": role,
+                          }
+                          REQGROUPS.append(g)
+              
+              PAYLOAD = {"previous_groups": PREVGROUPS, "required_groups": REQGROUPS}
+              
+              GB = requests.post(
+                  f"https://{CENTRAL}/v1/groupsbatch",
+                  verify=False,
+                  auth=("admin", ACS_ADMIN_PASSWORD),
+                  data=json.dumps(PAYLOAD),
+              )
+              print(f"{GB.status_code} {GB.reason}")
+
+              EOF
+
+              python -Wignore authroles.py
+      volumes:
+      - name: acs-auth-roles
+        configMap:
+          name: acs-auth-roles
+      restartPolicy: Never
+

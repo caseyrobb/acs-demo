@@ -5,3 +5,4 @@ resources:
 - acsadmins-group.yaml
 - auth-roles-cm.yaml
 - auth-provider-job.yaml
+- auth-roles-job.yaml

@@ -7,7 +7,7 @@ data:
   authroles.yaml: |
     ---
     Admin:
-    - cluster-admins
+    - acsadmins
     Analysts:
     - secops
     Continuous Integration:
