@@ -1,0 +1,41 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: trigger-template-policy-cm-builder
+  namespace: stackrox
+spec:
+  params:
+  - name: git-revision
+  - name: git-commit-message
+  - name: git-repo-url
+  - name: git-repo-name
+  - name: content-type
+  - name: pusher-name
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      annotations:
+        pipeline.openshift.io/started-by: opentlc-mgr
+      generateName: policy-cm-builder-
+      labels:
+        tekton.dev/pipeline: policy-cm-builder
+      namespace: stackrox
+    spec:
+      pipelineRef:
+        name: policy-cm-builder
+      status: null
+      workspaces:
+      - name: policies
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: gp2
+            volumeMode: Filesystem
+      - name: git-credentials
+        secret:
+          secretName: git-credentials

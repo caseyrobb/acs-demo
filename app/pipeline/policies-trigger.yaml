@@ -1,0 +1,13 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: policies-pipelinebinding
+  namespace: stackrox
+spec:
+  params:
+  - name: gitrevision
+    value: master
+  - name: namespace
+    value: stackrox
+  - name: gitrepositoryurl
+    value: https://github.com/caseyrobb/acs-policies
