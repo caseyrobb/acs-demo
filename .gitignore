@@ -1,2 +1,10 @@
 extras
 ansible
+auth
+notifiers
+git-credentials-secret.yaml
+*.py
+*.json
+acs-config-notifiers-app.yaml
+images
+policy-cm-builder-pipeline-dirty.yaml
