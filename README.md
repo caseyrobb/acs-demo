@@ -14,3 +14,6 @@ Below is a diagram along with steps detailing the process:
 5. The sync kicks off the [policy-config-job](https://github.com/caseyrobb/acs-demo/blob/master/app/policy/policy-config-job.yaml)
 6. The Job updates the RHACS policies and proceeds to delete itself upon success using a [post-sync hook](https://github.com/caseyrobb/acs-demo/blob/master/app/policy/policy-config-job.yaml#L6), allowing it to be run again the next time the Application syncs.
 
+## Pipeline
+
+![alt text](https://raw.githubusercontent.com/caseyrobb/acs-demo/master/pipeline.png)
