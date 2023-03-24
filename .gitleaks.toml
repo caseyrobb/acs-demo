@@ -1,0 +1,6 @@
+[allowlist]
+description = "global allow lists"
+paths = [
+    '''.gitleaks.toml''',
+    '''(.*?)(md)$''',
+]
