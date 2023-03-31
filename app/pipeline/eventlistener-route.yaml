@@ -8,7 +8,7 @@ metadata:
   name: el-event-listener-acs-policies
   namespace: stackrox
 spec:
-  host: el-event-listener-mi1mus-stackrox.apps.cluster-6qwdr.6qwdr.sandbox506.opentlc.com
+  host: el-event-listener-acs-policies.apps.cluster-jjjw9.jjjw9.sandbox1036.opentlc.com
   port:
     targetPort: 8080
   to:
