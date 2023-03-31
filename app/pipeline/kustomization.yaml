@@ -6,6 +6,6 @@ resources:
 - yq-task.yaml
 - policy-cm-builder-pipeline.yaml
 - trigger-template.yaml
-#- eventlistener-route.yaml
+- eventlistener-route.yaml
 - eventlistener.yaml
 - policies-trigger.yaml
