@@ -1,16 +1,19 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+  annotations:
+    openshift.io/host.generated: "true"
   labels:
+    app.kubernetes.io/instance: acs-config-pipeline-app
     app.kubernetes.io/managed-by: EventListener
     app.kubernetes.io/part-of: Triggers
     eventlistener: event-listener-acs-policies
   name: el-event-listener-acs-policies
   namespace: stackrox
 spec:
-  host: el-event-listener-acs-policies.apps.cluster-jjjw9.jjjw9.sandbox1036.opentlc.com
+  host: el-event-listener-acs-policies-stackrox.apps.cluster-jjjw9.jjjw9.sandbox1036.opentlc.com
   port:
-    targetPort: 8080
+    targetPort: http-listener
   to:
     kind: Service
     name: el-event-listener-acs-policies
