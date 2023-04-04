@@ -11,7 +11,7 @@ metadata:
   name: el-event-listener-acs-policies
   namespace: stackrox
 spec:
-  host: el-event-listener-acs-policies-stackrox.apps.cluster-gknd7.gknd7.sandbox2474.opentlc.com
+  host: el-event-listener-acs-policies-stackrox.apps.cluster-5jqjr.5jqjr.sandbox23.opentlc.com
   port:
     targetPort: http-listener
   to:
