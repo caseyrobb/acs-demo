@@ -1,6 +1,8 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
+  labels:
+    app.kubernetes.io/instance: acs-config-pipeline-app
   name: copy-and-commit
   namespace: stackrox
 spec:
@@ -12,13 +14,15 @@ spec:
       value: $(workspaces.ssh-directory.path)
     image: registry.redhat.io/ubi9/toolbox
     name: ""
-    script: "#!/usr/bin/env bash\nset -eu\ncp -Rv \"${WORKSPACE_SSH_DIRECTORY_PATH}\"
-      ~/.ssh\nchmod 700 ~/.ssh\nchmod -R 400 ~/.ssh/*\nchmod 600 ~/.ssh/known_hosts
-      \   \nls -l ~/.ssh/*\neval \"$(ssh-agent -s)\"\nssh-add ~/.ssh/id_ed25519\ncp
-      -v ./acs-policies/policies-payload-cm.yaml ./acs-demo/app/policy/policies-payload-cm.yaml\ncd
-      ./acs-demo/app/policy/\ngit config --global user.email \"cdr@redhat.com\"\ngit
-      config --global user.name \"Casey Robb\"\ngit add policies-payload-cm.yaml\ngit
-      commit -m \"policies-pipeline $(date +%s)\"\ngit push origin HEAD:master\n"
+    script: "#!/usr/bin/env bash\nset -eu\n\ncd ${WORKSPACE_SSH_DIRECTORY_PATH}\nfor
+      i in $(ls); do\n  cp `readlink $i` ~/.ssh\ndone          \n\nchmod 700 ~/.ssh\nchmod
+      400 ~/.ssh/id_ed25519\nchmod 440 ~/.ssh/config\nchmod 600 ~/.ssh/known_hosts\n\ncd
+      /workspace/output/acs-demo\neval \"$(ssh-agent -s)\"\nssh-add ~/.ssh/id_ed25519\ngit
+      config --global --add safe.directory /workspace/output/acs-demo\ngit config
+      --global user.email \"cdr@redhat.com\"\ngit config --global user.name \"Casey
+      Robb\"\ncp -v /workspace/output/acs-policies/policies-payload-cm.yaml ./app/policy/policies-payload-cm.yaml\ngit
+      add ./app/policy/policies-payload-cm.yaml\ngit commit -m \"Update from policies-pipeline
+      $(date +%s)\"\ngit push origin HEAD:master\n"
     workingDir: $(workspaces.output.path)
   workspaces:
   - description: Workspace onto which the file is written.
