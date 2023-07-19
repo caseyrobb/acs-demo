@@ -12,7 +12,3 @@ spec:
     repoURL: https://github.com/caseyrobb/acs-demo
     targetRevision: master
   project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: false
