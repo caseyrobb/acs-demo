@@ -1,6 +1,5 @@
 extras
 ansible
-auth
 notifiers
 git-credentials-secret.yaml
 *.py
