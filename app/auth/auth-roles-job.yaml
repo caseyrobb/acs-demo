@@ -1,7 +1,7 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: authprovider-job
+  name: auth-roles-job
   namespace: stackrox
   annotations:
     argocd.argoproj.io/hook: PostSync
@@ -9,11 +9,11 @@ metadata:
 spec:
   template:
     metadata:
-      name: authprovider-job
+      name: auth-roles-job
       namespace: acs
     spec:
       containers:
-        - name: authprovider-process
+        - name: auth-roles-process
           image: registry.redhat.io/ubi9/python-39
           env:
           - name: ACS_ADMIN_PASSWORD
@@ -75,12 +75,19 @@ spec:
                   for role, groups in data.items():
                       for group in groups:
                           g = {
-                              "props": {"authProviderId": AUTHID, "key": "groups", "value": group},
+                              "props": {
+                                "authProviderId": AUTHID,
+                                "key": "groups",
+                                "value": group,
+                                "id": ""
+                              },
                               "roleName": role,
                           }
                           REQGROUPS.append(g)
               
               PAYLOAD = {"previous_groups": PREVGROUPS, "required_groups": REQGROUPS}
+
+              print(json.dumps(PAYLOAD))
               
               GB = requests.post(
                   f"https://{CENTRAL}/v1/groupsbatch",
