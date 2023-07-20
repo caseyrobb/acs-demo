@@ -10,8 +10,8 @@ data:
     - acsadmins
     Analysts:
     - secops
+    - devops
     Continuous Integration:
     - devops
     Vulnerability Report Creator:
     - management
-
