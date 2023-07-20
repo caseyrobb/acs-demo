@@ -53,9 +53,20 @@ spec:
                   auth=("admin", ACS_ADMIN_PASSWORD),
               ).json()["authProviders"][0]["id"]
               
-              PREVGROUPS = json.loads(
+              GROUPS = json.loads(
                   requests.get(f"https://{CENTRAL}/v1/groups", verify=False, auth=("admin", ACS_ADMIN_PASSWORD)).text
               )["groups"]
+
+              PREVGROUPS = []
+
+              for group in GROUPS:
+                if group['props']['traits'] is None:
+                  group['props'].pop('traits')
+                if group['props']['key'] == "":
+                  group['props'].pop('key')
+                if group['props']['value'] == "":
+                  group['props'].pop('value')
+                PREVGROUPS.append(group)
               
               REQGROUPS = []
               REQGROUPS.append(PREVGROUPS[0])
