@@ -19,7 +19,7 @@ data:
         HEADERS = {"Authorization": f"Bearer {APITOKEN}", "Accept": "application/json"}
 
         resp = requests.get(
-            f"{CENTRAL}/v1/policies", headers=HEADERS, timeout=5, verify=False
+            f"{CENTRAL}/v1/policies", headers=HEADERS, timeout=5
         )
 
         # ignore all default policies
@@ -46,8 +46,7 @@ data:
                         f"{CENTRAL}/v1/policies/{policy['id']}",
                         headers=HEADERS,
                         data=json.dumps(policy),
-                        timeout=5,
-                        verify=False,
+                        timeout=5
                     )
                 else:
                     policy.pop("id", None)
@@ -56,8 +55,7 @@ data:
                         f"{CENTRAL}/v1/policies",
                         headers=HEADERS,
                         data=json.dumps(policy),
-                        timeout=5,
-                        verify=False,
+                        timeout=5
                     )
 
                 print(f"{r.status_code} {r.reason}")

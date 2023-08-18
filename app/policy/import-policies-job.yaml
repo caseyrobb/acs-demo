@@ -21,7 +21,7 @@ spec:
             - '-c'
             - |
               #!/usr/bin/env bash
-              python -Wignore /opt/policy/import-policies.py
+              python /opt/policy/import-policies.py
           env:
             - name: APITOKEN
               valueFrom:
