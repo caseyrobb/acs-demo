@@ -3,6 +3,5 @@ kind: Kustomization
 
 resources:
 - acs-config-policy-app.yaml
-- acs-config-auth-app.yaml
 - acs-config-pipeline-app.yaml
-#- https://github.com/caseyrobb/acs-demo/app/auth
+#- acs-config-auth-app.yaml
