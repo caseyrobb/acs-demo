@@ -19,4 +19,4 @@ patches:
   patch: |-
     - op: replace
       path: /spec/host
-      value: el-event-listener-acs-policies-stackrox.apps.cluster-mwfzn.mwfzn.sandbox3061.opentlc.com
+      value: el-event-listener-acs-policies-stackrox.apps.cluster-snvkq.snvkq.sandbox726.opentlc.com
