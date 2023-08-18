@@ -13,7 +13,7 @@ Below is a diagram along with steps outlining the process:
 3. The new ConfigMap is pushed to the [acs-demo](https://github.com/caseyrobb/acs-demo/blob/master/app/policy/policies-payload-cm.yaml) repository which is monitored by OpenShift GitOps.
 4. The ArgoCD application [acs-config-policy-app](https://github.com/caseyrobb/acs-demo/blob/master/argocd/acs-config-policy-app.yaml) detects the new ConfigMap and syncs the changes.
 5. The sync creates the Job [import-policies-job](https://github.com/caseyrobb/acs-demo/blob/master/app/policy/import-policies-job.yaml).
-6. The Job updates the RHACS policies via the API and proceeds to delete itself upon success using a [post-sync hook](https://github.com/caseyrobb/acs-demo/blob/master/app/policy/policy-config-job.yaml#L6).  This allows the Job to be run again the next time a new ConfigMap is detected and the Application syncs.
+6. The Job updates the RHACS policies via the API and proceeds to delete itself upon success using a [post-sync hook](https://github.com/caseyrobb/acs-demo/blob/3de3f5b26a8460e4316c73390e81484639459420/app/policy/import-policies-job.yaml#L8).  This allows the Job to be run again the next time a new ConfigMap is detected and the Application syncs.
 
 ## Pipeline
 ![alt text](https://raw.githubusercontent.com/caseyrobb/acs-demo/master/pipeline.png)
