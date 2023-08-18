@@ -12,7 +12,7 @@ spec:
   - name: content-type
   - name: pusher-name
   resourcetemplates:
-  - apiVersion: tekton.dev/v1
+  - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
       annotations:
