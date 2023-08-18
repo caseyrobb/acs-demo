@@ -1,0 +1,50 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: import-policies-job
+  namespace: stackrox
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      name: import-policies
+      namespace: acs-gitops
+    spec:
+      containers:
+        - name: import-policies
+          image: quay.io/carobb/ubi9-requests
+          command:
+            - /bin/bash
+            - '-c'
+            - |
+              #!/usr/bin/env bash
+              python -Wignore /opt/policy/import-policies.py
+          env:
+            - name: APITOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gitops-api-token
+                  key: token
+            - name: CENTRAL
+              valueFrom:
+                configMapKeyRef:
+                  name: admission-control
+                  key: central-endpoint
+          volumeMounts:
+            - name: script
+              mountPath: /opt/policy
+            - name: payload
+              mountPath: /opt/payload
+      volumes:
+      - name: script
+        configMap:
+          name: policy-script
+      - name: payload
+        configMap:
+          name: policies-payload
+      restartPolicy: Never
+      dnsPolicy: ClusterFirst
+      terminationGracePeriodSeconds: 30
