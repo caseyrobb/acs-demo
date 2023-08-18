@@ -9,7 +9,7 @@ patches:
 - target:
     group: batch
     version: v1
-    type: Job
+    kind: Job
     name: import-policies-job
   patch: |-
     - op: replace
