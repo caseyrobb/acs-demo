@@ -15,7 +15,7 @@ patches:
     group: route.openshift.io
     version: v1
     kind: Route
-    name: 
+    name: el-event-listener-acs-policies
   patch: |-
     - op: replace
       path: /spec/host

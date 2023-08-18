@@ -4,3 +4,14 @@ resources:
 - policies-payload-configmap.yaml
 - policy-script-configmap.yaml
 - import-policies-job.yaml
+
+patches:
+- target:
+    group: batch
+    version: v1
+    type: Job
+    name: import-policies-job
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: central-stackrox.apps.cluster-mwfzn.mwfzn.sandbox3061.opentlc.com

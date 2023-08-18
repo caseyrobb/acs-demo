@@ -23,16 +23,13 @@ spec:
               #!/usr/bin/env bash
               python /opt/policy/import-policies.py
           env:
+            - name: CENTRAL
+              value: PATCH_ME
             - name: APITOKEN
               valueFrom:
                 secretKeyRef:
                   name: gitops-api-token
                   key: token
-            - name: CENTRAL
-              valueFrom:
-                configMapKeyRef:
-                  name: admission-control
-                  key: central-endpoint
           volumeMounts:
             - name: script
               mountPath: /opt/policy
