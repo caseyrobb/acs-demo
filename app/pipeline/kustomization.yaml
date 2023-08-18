@@ -9,3 +9,14 @@ resources:
 - eventlistener-route.yaml
 - eventlistener.yaml
 - policies-trigger.yaml
+
+patches:
+- target:
+    group: route.openshift.io
+    version: v1
+    kind: Route
+    name: 
+  patch: |-
+    - op: replace
+      path: /spec/host
+      value: el-event-listener-acs-policies-stackrox.apps.cluster-mwfzn.mwfzn.sandbox3061.opentlc.com

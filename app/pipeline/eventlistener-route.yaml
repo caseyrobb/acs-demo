@@ -11,7 +11,7 @@ metadata:
   name: el-event-listener-acs-policies
   namespace: stackrox
 spec:
-  host: el-event-listener-acs-policies-stackrox.apps.cluster-mwfzn.mwfzn.sandbox3061.opentlc.com
+  host: PATCH_ME
   port:
     targetPort: http-listener
   to:
