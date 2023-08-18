@@ -13,7 +13,7 @@ metadata:
 spec:
   host: PATCH_ME
   port:
-    targetPort: http-listener
+    targetPort: https-listener
   to:
     kind: Service
     name: el-event-listener-acs-policies
