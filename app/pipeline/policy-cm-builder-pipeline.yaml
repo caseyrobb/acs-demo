@@ -58,7 +58,7 @@ spec:
           value: >-
             cd acs-policies; oc create configmap policies-payload -n stackrox
             --from-file=policies-payload.json --dry-run=client -o yaml >
-            policies-payload-cm.yaml; cat policies-payload-cm.yaml
+            policies-payload-configmap.yaml; cat policies-payload-configmap.yaml
         - name: VERSION
           value: latest
       runAfter:
@@ -88,7 +88,7 @@ spec:
     - name: yaml-lint
       params:
         - name: SCRIPT
-          value: cd acs-policies; yq policies-payload-cm.yaml
+          value: cd acs-policies; yq policies-payload-configmap.yaml
         - name: image
           value: >-
             docker.io/mikefarah/yq:4.27.5@sha256:2be3626ed633fbe1fc33ee9343a1256a6be53334412b2251b9a859f8c145bb53

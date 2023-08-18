@@ -20,8 +20,8 @@ spec:
       /workspace/output/acs-demo\neval \"$(ssh-agent -s)\"\nssh-add ~/.ssh/id_ed25519\ngit
       config --global --add safe.directory /workspace/output/acs-demo\ngit config
       --global user.email \"cdr@redhat.com\"\ngit config --global user.name \"Casey
-      Robb\"\ncp -v /workspace/output/acs-policies/policies-payload-cm.yaml ./app/policy/policies-payload-cm.yaml\ngit
-      add ./app/policy/policies-payload-cm.yaml\ngit commit -m \"Update from policies-pipeline
+      Robb\"\ncp -v /workspace/output/acs-policies/policies-payload-configmap.yaml ./app/policy/policies-payload-configmap.yaml\ngit
+      add ./app/policy/policies-payload-configmap.yaml\ngit commit -m \"Update from policies-pipeline
       $(date +%s)\"\ngit push origin HEAD:master\n"
     workingDir: $(workspaces.output.path)
   workspaces:
