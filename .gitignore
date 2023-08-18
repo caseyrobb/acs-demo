@@ -6,4 +6,6 @@ git-credentials-secret.yaml
 *.json
 acs-config-notifiers-app.yaml
 images
-policy-cm-builder-pipeline-dirty.yaml
+bootstrap.sh
+generate-token*
+gitops-api-token-secret.yaml

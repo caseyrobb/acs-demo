@@ -1,0 +1,70 @@
+apiVersion: v1
+data:
+  import-policies.py: |
+    import json
+    import os
+    import sys
+    import requests
+
+
+    def policy_exists(pol) -> bool:
+        # check policy for unique name
+        return True in [pol["name"] in p["name"] for p in user_defined_policies]
+
+
+    if __name__ == "__main__":
+
+        CENTRAL = f"https://{os.environ.get('CENTRAL')}"
+        APITOKEN = os.environ.get("APITOKEN")
+        HEADERS = {"Authorization": f"Bearer {APITOKEN}", "Accept": "application/json"}
+
+        resp = requests.get(
+            f"{CENTRAL}/v1/policies", headers=HEADERS, timeout=5, verify=False
+        )
+
+        # ignore all default policies
+        all_policies = json.loads(resp.text)
+        user_defined_policies = [p for p in all_policies["policies"] if not p["isDefault"]]
+
+        with open("/opt/payload/policies-payload.json", "r", encoding="utf-8") as f:
+            for policy in json.load(f)["policies"]:
+                # remove lastUpdated if it's defined
+                policy.pop("lastUpdated", None)
+                policy.pop("policyVersion", None)
+
+                if policy_exists(policy):
+                    if not "id" in policy:
+                        pid = [
+                            p["id"]
+                            for p in user_defined_policies
+                            if p["name"] == policy["name"]
+                        ][0]
+                        policy.update({"id": pid})
+                    print(f"Updating policy '{policy['name']}'...")
+
+                    r = requests.put(
+                        f"{CENTRAL}/v1/policies/{policy['id']}",
+                        headers=HEADERS,
+                        data=json.dumps(policy),
+                        timeout=5,
+                        verify=False,
+                    )
+                else:
+                    policy.pop("id", None)
+                    print(f"Adding new policy '{policy['name']}'...")
+                    r = requests.post(
+                        f"{CENTRAL}/v1/policies",
+                        headers=HEADERS,
+                        data=json.dumps(policy),
+                        timeout=5,
+                        verify=False,
+                    )
+
+                print(f"{r.status_code} {r.reason}")
+
+                if r.status_code >= 400:
+                    sys.exit(-1)
+kind: ConfigMap
+metadata:
+  name: policy-script
+  namespace: stackrox
