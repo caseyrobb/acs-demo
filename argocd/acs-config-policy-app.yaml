@@ -10,7 +10,7 @@ spec:
   source:
     path: app/policy
     repoURL: https://github.com/caseyrobb/acs-demo
-    targetRevision: master
+    targetRevision: cm
   project: default
   syncPolicy:
     automated:
