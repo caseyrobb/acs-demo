@@ -35,7 +35,7 @@ spec:
               requests:
                 storage: 1Gi
             volumeMode: Filesystem
-            storageClass: gp3-csi
+            storageClass: gp2
       - name: git-credentials
         secret:
           secretName: git-credentials
