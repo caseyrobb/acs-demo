@@ -8,10 +8,10 @@ oc apply -k https://github.com/redhat-cop/gitops-catalog/openshift-pipelines-ope
 
 # Install RHACS operator
 oc apply -k https://github.com/redhat-cop/gitops-catalog/advanced-cluster-security-operator/operator/overlays/stable
-sleep 30
+sleep 60
 # Wait for CRDs to be installed before applying central and securedcluster instances
 oc apply -k https://github.com/redhat-cop/gitops-catalog/advanced-cluster-security-operator/instance/overlays/default
-sleep 30
+sleep 60
 
 # Extract ingress cert
 SECRET=$(oc get secret -l certificate-type=apiserver -n openshift-ingress -o name)
@@ -35,11 +35,11 @@ git commit -m "Update routes"
 git push
 
 # Add git-credentials secret
- oc apply -f ./app/pipeline/git-credentials-secret.yaml
+oc apply -f ./app/pipeline/git-credentials-secret.yaml
 
 # Generate ACS API Token
 PASSWORD=$(oc get secret -n stackrox central-htpasswd -o json | jq -r '.data.password' | base64 -d)
-TOKEN=$(curl -X POST -u "admin:${PASSWORD}" --data-raw '{"name":"gitops-api-token","roles":["Admin"]}' https://${CENTRAL}/v1/apitokens/generate | jq -r '.token')
+TOKEN=$(curl -s -X POST -u "admin:${PASSWORD}" --data-raw '{"name":"gitops-api-token","roles":["Admin"]}' https://${CENTRAL}/v1/apitokens/generate | jq -r '.token')
 
 # Create gitops-api-token secret
 oc create secret generic gitops-api-token --from-literal=token=${TOKEN} -n stackrox
