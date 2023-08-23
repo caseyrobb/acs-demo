@@ -14,4 +14,4 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
-      value: central-stackrox.apps.cluster-zvmj8.zvmj8.sandbox294.opentlc.com
+      value: central-stackrox.apps.cluster-rbz2x.rbz2x.sandbox1572.opentlc.com
