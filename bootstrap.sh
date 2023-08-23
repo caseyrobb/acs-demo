@@ -11,7 +11,7 @@ oc apply -k https://github.com/redhat-cop/gitops-catalog/advanced-cluster-securi
 sleep 60
 # Wait for CRDs to be installed before applying central and securedcluster instances
 oc apply -k https://github.com/redhat-cop/gitops-catalog/advanced-cluster-security-operator/instance/overlays/default
-sleep 60
+sleep 180
 
 # Extract ingress cert
 SECRET=$(oc get secret -l certificate-type=apiserver -n openshift-ingress -o name)
@@ -47,5 +47,17 @@ oc create secret generic gitops-api-token --from-literal=token=${TOKEN} -n stack
 # Apply cluster-admin role to application-controller service account
 oc adm policy add-cluster-role-to-user cluster-admin -z openshift-gitops-argocd-application-controller -n openshift-gitops
 
+# Apply initial ACS policy configmap
+oc apply -f app/policy/policies-payload-configmap.yaml
+
 # Install app-of-apps
 oc apply -f acs-config-app-of-apps.yaml
+
+# Display ArgoCD admin password
+printf "\nArgoCD admin password: %s\n\n" "$(oc get secret -n openshift-gitops openshift-gitops-cluster -o json | jq -r '.data."admin.password"' | base64 -d)"
+
+# Display webhook route url
+printf "Webhook route URL: http://%s\n\n" "$(oc get route -n stackrox el-event-listener-acs-policies -o json | jq -r .spec.host)"
+
+# Display Central URL
+printf "Central URL: https://%s\n\n" "$(oc get route -n stackrox central -o json | jq -r '.spec.host')"
