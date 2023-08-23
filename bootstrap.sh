@@ -56,8 +56,15 @@ oc apply -f acs-config-app-of-apps.yaml
 # Display ArgoCD admin password
 printf "\nArgoCD admin password: %s\n\n" "$(oc get secret -n openshift-gitops openshift-gitops-cluster -o json | jq -r '.data."admin.password"' | base64 -d)"
 
+# Display Central URL
+printf "Central URL: https://%s\n\n" "$(oc get route -n stackrox central -o json | jq -r '.spec.host')"
+
+# Display ACS Admin password
+printf "ACS admin password: %s\n\n" "$(oc get secret -n stackrox central-htpasswd -o json | jq -r '.data.password' | base64 -d)"
+
+oc apply -k extras/test-app
+
+sleep 20
 # Display webhook route url
 printf "Webhook route URL: http://%s\n\n" "$(oc get route -n stackrox el-event-listener-acs-policies -o json | jq -r .spec.host)"
 
-# Display Central URL
-printf "Central URL: https://%s\n\n" "$(oc get route -n stackrox central -o json | jq -r '.spec.host')"

@@ -8,3 +8,4 @@ acs-config-notifiers-app.yaml
 images
 generate-token*
 gitops-api-token-secret.yaml
+bootstrap.sh
