@@ -24,18 +24,16 @@ spec:
     spec:
       pipelineRef:
         name: policy-cm-builder
-      status: null
       workspaces:
       - name: policies
         volumeClaimTemplate:
           spec:
             accessModes:
-            - ReadWriteOnce
+            - ReadWriteMany
             resources:
               requests:
                 storage: 1Gi
             volumeMode: Filesystem
-            #storageClassName: gp3-csi
       - name: git-credentials
         secret:
           secretName: git-credentials
