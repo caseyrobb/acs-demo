@@ -46,6 +46,7 @@ data:
                         f"{CENTRAL}/v1/policies/{policy['id']}",
                         headers=HEADERS,
                         data=json.dumps(policy),
+                        verify=False,
                         timeout=5
                     )
                 else:
@@ -55,6 +56,7 @@ data:
                         f"{CENTRAL}/v1/policies",
                         headers=HEADERS,
                         data=json.dumps(policy),
+                        verify=False,
                         timeout=5
                     )
 
