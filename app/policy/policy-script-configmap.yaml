@@ -19,7 +19,7 @@ data:
         HEADERS = {"Authorization": f"Bearer {APITOKEN}", "Accept": "application/json"}
 
         resp = requests.get(
-            f"{CENTRAL}/v1/policies", headers=HEADERS, timeout=5
+            f"{CENTRAL}/v1/policies", headers=HEADERS, timeout=5, verify=False
         )
 
         # ignore all default policies
