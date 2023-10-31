@@ -23,6 +23,8 @@ CENTRALPOD=$(oc get pods -l app=central -o name -n stackrox)
 oc delete ${CENTRALPOD} -n stackrox
 rm -rf tls.crt tls.key
 
+sleep 10
+
 # Replace old route URLs
 BASEDOMAIN="$(oc get route -n openshift-console console -o json | jq -r '.spec.host' | sed 's/^console-openshift-console.apps.//g')"
 EL="el-event-listener-acs-policies-stackrox.apps.${BASEDOMAIN}"
@@ -39,7 +41,9 @@ oc apply -f ./app/pipeline/git-credentials-secret.yaml
 
 # Generate ACS API Token
 PASSWORD=$(oc get secret -n stackrox central-htpasswd -o json | jq -r '.data.password' | base64 -d)
+printf "Central default admin password %s\n" "${PASSWORD}"
 TOKEN=$(curl -s -X POST -u "admin:${PASSWORD}" --data-raw '{"name":"gitops-api-token","roles":["Admin"]}' https://${CENTRAL}/v1/apitokens/generate | jq -r '.token')
+printf "TOKEN %s\n" "${TOKEN}"
 
 # Create gitops-api-token secret
 oc create secret generic gitops-api-token --from-literal=token=${TOKEN} -n stackrox
