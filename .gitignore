@@ -9,3 +9,4 @@ images
 generate-token*
 gitops-api-token-secret.yaml
 bootstrap.sh
+env.sh
