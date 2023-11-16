@@ -19,4 +19,4 @@ patches:
   patch: |-
     - op: replace
       path: /spec/host
-      value: el-event-listener-acs-policies-stackrox.apps.cluster-ctpnr.ctpnr.sandbox2494.opentlc.com
+      value: el-event-listener-acs-policies-stackrox.apps.bellatrix.redcomet.ca
